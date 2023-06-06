@@ -1,8 +1,11 @@
 import 'package:asuka/asuka.dart';
 import 'package:eduqhub_test/app/modules/user/domain/model/user.dart';
+import 'package:eduqhub_test/app/modules/user/domain/usecase/get_citys_usecase.dart';
 import 'package:eduqhub_test/app/modules/user/domain/usecase/save_user_usecase.dart';
+import 'package:eduqhub_test/app/modules/user/modules/create_or_edit/presentation/pages/state/city_state.dart';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
+import 'package:async/async.dart';
 
 part 'create_or_edit_store.g.dart';
 
@@ -11,9 +14,44 @@ class CreateOrEditUserStore = CreateOrEditUserStoreBase
 
 abstract class CreateOrEditUserStoreBase with Store {
   final SaveUserUsecaseContract usecase;
+  final GetCitysUsecaseContract usecaseCity;
+  CancelableOperation? cancellableOperation;
   CreateOrEditUserStoreBase({
     required this.usecase,
-  });
+    required this.usecaseCity,
+  }) {
+    reaction((_) => state, (_) async {
+      city = "";
+
+      await stateInitialReaction(uf: state ?? "");
+    });
+  }
+
+  @observable
+  CityState cityState = const StartCityState();
+
+  @action
+  Future<void> setCityState(CityState cityState) async =>
+      this.cityState = cityState;
+
+  Future stateInitialReaction({required String uf}) async {
+    final cancelOperation = cancellableOperation;
+    cancellableOperation =
+        CancelableOperation<CityState>.fromFuture(_listCity(uf: uf));
+    await cancelOperation?.cancel();
+    await setCityState(const LoadingCityState());
+    await setCityState(await cancellableOperation!
+        .valueOrCancellation(SucessCityState(city: cityState.city)));
+    return;
+  }
+
+  Future<CityState> _listCity({required String uf}) async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    final result = await usecaseCity(uf: uf);
+    return result.fold((l) => ErrorCityState(error: l, city: []), (r) {
+      return SucessCityState(city: r);
+    });
+  }
 
   @observable
   String? username;
@@ -55,9 +93,8 @@ abstract class CreateOrEditUserStoreBase with Store {
         city: city!,
         brief: obs!,
       );
-
+      await usecase.call(user: user);
       AsukaSnackbar.success("Usuário Gravado com Sucesso").show();
-      print(user);
     }
   }
 

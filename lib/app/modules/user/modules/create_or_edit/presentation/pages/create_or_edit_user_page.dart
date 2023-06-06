@@ -1,3 +1,5 @@
+import 'package:eduqhub_test/app/modules/user/domain/model/states_brazil.dart';
+import 'package:eduqhub_test/app/modules/user/modules/create_or_edit/presentation/pages/state/city_state.dart';
 import 'package:eduqhub_test/app/modules/user/modules/create_or_edit/presentation/pages/store/create_or_edit_store.dart';
 import 'package:eduqhub_test/app/modules/user/modules/create_or_edit/presentation/pages/widgets/avatar_widget.dart';
 import 'package:eduqhub_test/app/modules/user/modules/create_or_edit/presentation/pages/widgets/button_save.dart';
@@ -36,7 +38,7 @@ class _CreateOrEditUserPageState extends State<CreateOrEditUserPage> {
             )),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -56,7 +58,7 @@ class _CreateOrEditUserPageState extends State<CreateOrEditUserPage> {
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
+                          return 'Digite o seu nome';
                         }
                         return null;
                       });
@@ -94,7 +96,7 @@ class _CreateOrEditUserPageState extends State<CreateOrEditUserPage> {
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
+                          return 'Digite sua data de aniversário';
                         }
                         return null;
                       });
@@ -102,27 +104,47 @@ class _CreateOrEditUserPageState extends State<CreateOrEditUserPage> {
                 const SizedBox(height: 20),
                 Observer(builder: (context) {
                   return DropdownCustom<String>(
-                      listOfItems: const ["1", "2"],
+                      listOfItems:
+                          brazilianStates.map((e) => e.abbreviation).toList(),
                       hint: "Estado",
                       initialValue: "",
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
+                          return 'Escolha um estado';
                         }
                         return null;
                       },
-                      onChanged: (value) =>
-                          createOrEditUserStore.setState(value));
+                      onChanged: (value) {
+                        createOrEditUserStore.setState(value);
+                        createOrEditUserStore.setCity("");
+                      });
                 }),
                 const SizedBox(height: 20),
                 Observer(builder: (context) {
+                  final cityState = createOrEditUserStore.cityState;
+                  if (cityState is SucessCityState) {
+                    return DropdownCustom<String>(
+                      listOfItems: cityState.city,
+                      hint: "Cidade",
+                      initialValue: "",
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Escolha uma cidade';
+                        }
+                        return null;
+                      },
+                      onChanged: (value) {
+                        createOrEditUserStore.setCity(value);
+                      },
+                    );
+                  }
                   return DropdownCustom<String>(
-                    listOfItems: const ["1", "2"],
+                    listOfItems: const [],
                     hint: "Cidade",
                     initialValue: "",
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
+                        return 'Escolha uma cidade';
                       }
                       return null;
                     },
@@ -139,7 +161,7 @@ class _CreateOrEditUserPageState extends State<CreateOrEditUserPage> {
                       onChange: (value) => createOrEditUserStore.setObs(value),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
+                          return 'Digite sobre você';
                         }
                         return null;
                       });
@@ -155,7 +177,8 @@ class _CreateOrEditUserPageState extends State<CreateOrEditUserPage> {
                       },
                     )),
                   ],
-                )
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),

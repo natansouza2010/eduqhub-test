@@ -9,6 +9,22 @@ part of 'create_or_edit_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$CreateOrEditUserStore on CreateOrEditUserStoreBase, Store {
+  late final _$cityStateAtom =
+      Atom(name: 'CreateOrEditUserStoreBase.cityState', context: context);
+
+  @override
+  CityState get cityState {
+    _$cityStateAtom.reportRead();
+    return super.cityState;
+  }
+
+  @override
+  set cityState(CityState value) {
+    _$cityStateAtom.reportWrite(value, super.cityState, () {
+      super.cityState = value;
+    });
+  }
+
   late final _$usernameAtom =
       Atom(name: 'CreateOrEditUserStoreBase.username', context: context);
 
@@ -105,6 +121,14 @@ mixin _$CreateOrEditUserStore on CreateOrEditUserStoreBase, Store {
     });
   }
 
+  late final _$setCityStateAsyncAction =
+      AsyncAction('CreateOrEditUserStoreBase.setCityState', context: context);
+
+  @override
+  Future<void> setCityState(CityState cityState) {
+    return _$setCityStateAsyncAction.run(() => super.setCityState(cityState));
+  }
+
   late final _$setUsernameAsyncAction =
       AsyncAction('CreateOrEditUserStoreBase.setUsername', context: context);
 
@@ -156,6 +180,7 @@ mixin _$CreateOrEditUserStore on CreateOrEditUserStoreBase, Store {
   @override
   String toString() {
     return '''
+cityState: ${cityState},
 username: ${username},
 email: ${email},
 birthDate: ${birthDate},
