@@ -2,7 +2,8 @@ import 'package:eduqhub_test/core/constants/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class ButtonSave extends StatelessWidget {
-  const ButtonSave({super.key});
+  final void Function() onClick;
+  const ButtonSave({super.key, required this.onClick});
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +30,8 @@ class ButtonSave extends StatelessWidget {
             borderRadius: BorderRadius.circular(16.0),
           ),
           backgroundColor: green,
-          // Background color
         ),
-        onPressed: () {
-          // Respond to button press
-        },
+        onPressed: onClick,
         child: const Text("Salvar"),
       ),
     );

@@ -2,6 +2,7 @@ import 'package:eduqhub_test/core/constants/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class DropdownCustom<T> extends StatelessWidget {
+  final String? Function(T?)? validator;
   final List<T> listOfItems;
   final String hint;
   final T? initialValue;
@@ -13,6 +14,7 @@ class DropdownCustom<T> extends StatelessWidget {
     required this.hint,
     this.initialValue,
     this.onChanged,
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -23,6 +25,7 @@ class DropdownCustom<T> extends StatelessWidget {
         color: textFormField,
       ),
       child: DropdownButtonFormField<T>(
+          validator: validator,
           value: itens(context).contains(initialValue) ? initialValue : null,
           hint: Padding(
             padding: const EdgeInsets.only(left: 20.0),

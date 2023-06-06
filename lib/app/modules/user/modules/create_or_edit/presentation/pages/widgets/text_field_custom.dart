@@ -1,21 +1,31 @@
 import 'package:eduqhub_test/core/constants/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class TextFieldCustom extends StatelessWidget {
+  final String? Function(String?)? validator;
+  final List<TextInputFormatter>? mask;
   final String label;
   final Widget? iconPrefix;
   final double? height;
   final bool? hasIcon;
+  final void Function(String?) onChange;
   const TextFieldCustom(
       {super.key,
       required this.label,
       this.iconPrefix,
       this.height,
-      this.hasIcon});
+      this.hasIcon,
+      required this.onChange,
+      this.mask,
+      this.validator});
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
+      validator: validator,
+      inputFormatters: mask,
+      onChanged: onChange,
       maxLines: null,
       decoration: InputDecoration(
         contentPadding:

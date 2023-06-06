@@ -1,38 +1,48 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
+
 class User {
+  final String? id;
   final String picture;
   final String email;
   final String firstName;
+  final String lastName;
   final DateTime birthDate;
-  final String state;
+  final String? state;
   final String city;
   final String brief;
 
   User({
+    this.id,
     required this.picture,
     required this.email,
     required this.firstName,
+    required this.lastName,
     required this.birthDate,
-    required this.state,
+    this.state,
     required this.city,
     required this.brief,
   });
 
   User copyWith({
+    String? id,
     String? picture,
     String? email,
     String? firstName,
+    String? lastName,
     DateTime? birthDate,
     String? state,
     String? city,
     String? brief,
   }) {
     return User(
+      id: id ?? this.id,
       picture: picture ?? this.picture,
       email: email ?? this.email,
       firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
       birthDate: birthDate ?? this.birthDate,
       state: state ?? this.state,
       city: city ?? this.city,
@@ -42,10 +52,12 @@ class User {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'id': id,
       'picture': picture,
       'email': email,
       'firstName': firstName,
-      'birthDate': birthDate.millisecondsSinceEpoch,
+      'lastName': lastName,
+      'birthDate': birthDate.toString().substring(0, 10),
       'state': state,
       'city': city,
       'brief': brief,
@@ -53,12 +65,15 @@ class User {
   }
 
   factory User.fromMap(Map<String, dynamic> map) {
+    final dateFormated = DateFormat('yyyy-MM-DD').parse(map["birthDate"]);
     return User(
+      id: map['id'] != null ? map['id'] as String : null,
       picture: map['picture'] as String,
       email: map['email'] as String,
       firstName: map['firstName'] as String,
-      birthDate: DateTime.fromMillisecondsSinceEpoch(map['birthDate'] as int),
-      state: map['state'] as String,
+      lastName: map['lastName'] as String,
+      birthDate: dateFormated,
+      state: map['state'] != null ? map['state'] as String : null,
       city: map['city'] as String,
       brief: map['brief'] as String,
     );
@@ -71,16 +86,18 @@ class User {
 
   @override
   String toString() {
-    return 'User(picture: $picture, email: $email, firstName: $firstName, birthDate: $birthDate, state: $state, city: $city, brief: $brief)';
+    return 'User(id: $id, picture: $picture, email: $email, firstName: $firstName, lastName: $lastName, birthDate: $birthDate, state: $state, city: $city, brief: $brief)';
   }
 
   @override
   bool operator ==(covariant User other) {
     if (identical(this, other)) return true;
 
-    return other.picture == picture &&
+    return other.id == id &&
+        other.picture == picture &&
         other.email == email &&
         other.firstName == firstName &&
+        other.lastName == lastName &&
         other.birthDate == birthDate &&
         other.state == state &&
         other.city == city &&
@@ -89,9 +106,11 @@ class User {
 
   @override
   int get hashCode {
-    return picture.hashCode ^
+    return id.hashCode ^
+        picture.hashCode ^
         email.hashCode ^
         firstName.hashCode ^
+        lastName.hashCode ^
         birthDate.hashCode ^
         state.hashCode ^
         city.hashCode ^

@@ -1,6 +1,8 @@
+import 'package:eduqhub_test/app/modules/user/domain/model/user.dart';
 import 'package:flutter/material.dart';
 
 class UserTile extends StatelessWidget {
+  final User user;
   final double height;
   final void Function()? onTap;
 
@@ -8,6 +10,7 @@ class UserTile extends StatelessWidget {
     super.key,
     this.height = 180,
     this.onTap,
+    required this.user,
   });
 
   @override
@@ -40,13 +43,14 @@ class UserTile extends StatelessWidget {
                 Expanded(
                     child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text("Natan Souza", style: TextStyle(fontSize: 24)),
-                    SizedBox(height: 4),
-                    Text("natansouza2010@gmail.com",
-                        style: TextStyle(fontSize: 12)),
-                    SizedBox(height: 4),
-                    Text("15/05/2000", style: TextStyle(fontSize: 12)),
+                  children: [
+                    Text("${user.firstName} ${user.lastName} ",
+                        style: const TextStyle(fontSize: 24)),
+                    const SizedBox(height: 4),
+                    Text(user.email, style: const TextStyle(fontSize: 12)),
+                    const SizedBox(height: 4),
+                    Text("${user.birthDate}",
+                        style: const TextStyle(fontSize: 12)),
                   ],
                 ))
               ],
@@ -54,10 +58,10 @@ class UserTile extends StatelessWidget {
             const SizedBox(height: 4),
             const Divider(),
             Row(
-              children: const [
-                Text("São Carlos - SP "),
-                Spacer(),
-                Text("Just an another user to test API updated "),
+              children: [
+                Text("${user.city} - ${user.state} "),
+                const Spacer(),
+                Text(user.brief),
               ],
             )
           ],
